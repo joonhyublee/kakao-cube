@@ -1,0 +1,19 @@
+{
+  "name": "design-project-kakao-talk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/joonhyublee/design-project-kakao-talk.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joonhyublee/design-project-kakao-talk/issues"
+  },
+  "homepage": "https://github.com/joonhyublee/design-project-kakao-talk#readme"
+}
