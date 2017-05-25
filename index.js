@@ -1,5 +1,5 @@
 const http  = require('http');
-// const fs    = require('fs');
+const fs    = require('fs');
 // const page  = fs.readFileSync('./index.html');
 // const app   = fs.readFileSync('./bundle.js');
 
@@ -36,8 +36,8 @@ io.of('/client').on('connection', socket => {
         // load datea file
         const old_message_list = JSON.parse(fs.readFileSync('./data.json')).message_list;
 
-        // append message
-        const new_message_lit = [
+        // create new message and append it to message list
+        let new_message_lit = [
             ...old_message_list,
             {
                 time: Date.now(),
@@ -46,8 +46,11 @@ io.of('/client').on('connection', socket => {
             }
         ];
 
-        // if number of message is over 99, truncate
+        // if number of message is over 99, truncate to 99 messages
         if (new_message_list.length > 99) {
+            new_message_list = new_message_list.slice(
+                new_message_list.length - 99, new_message_list.length
+            );
         }
 
         // send message to everyone
@@ -64,7 +67,7 @@ io.of('/client').on('connection', socket => {
 
         // mark all messages as read
         const new_message_list = old_message_list.map(message =>
-            Object.assign({}, message, { read: true });
+            Object.assign({}, message, { read: true })
         );
 
         // send message to everyone

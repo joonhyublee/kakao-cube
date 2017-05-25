@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/joonhyublee/design-project-kakao-talk/issues"
   },
-  "homepage": "https://github.com/joonhyublee/design-project-kakao-talk#readme"
+  "homepage": "https://github.com/joonhyublee/design-project-kakao-talk#readme",
+  "dependencies": {
+    "socket.io": "^2.0.1"
+  }
 }
