@@ -28,7 +28,7 @@ io.of('/client').on('connection', socket => {
 
     // send messages for the first time
     const message_list = JSON.parse(fs.readFileSync('./data.json')).message_list;
-    io.of('/client').emit('message_list_updated', { message_list });
+    socket.emit('message_list_updated', { message_list });
 
     // bind response to request events
     // upon write_one_message event
