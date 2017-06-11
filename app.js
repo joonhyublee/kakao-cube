@@ -1,6 +1,7 @@
 import React    from 'react';
 import ReactDOM from 'react-dom';
 import io       from 'socket.io-client';
+import Home     from './home.js';
 
 const style = {
     container: {
@@ -59,7 +60,7 @@ const style = {
     },
 
     top_bar_left_icon: {
-        marginLeft: 35,
+        marginLeft: 22,
         width: 40,
         height: 40,
         // border: '1px solid black'
@@ -81,22 +82,32 @@ const style = {
         flexDirection: 'column',
         justifyContent: 'flex-end',
         textAlign: 'right',
-        marginRight: 10,
+        margin: '0px 10px',
         fontSize: 20
     },
 
     chat_info_unread_count: {
         color: '#ffeb00',
-        textShadow: '1px 1px #859fb2'
+        textShadow: '1px 1px rgb(132, 158, 177)'
     },
 
     chat_info_time: {
-        color: '#657988'
+        color: 'rgb(96, 115, 129)'
     },
 
     chat_bubble: {
         maxWidth: 500,
         backgroundColor: '#ffeb00',
+        marginTop: 10,
+        // minHeight: 70,
+        padding: '17px 15px 17px 15px', // 18px
+        fontSize: 30,
+        borderRadius: 5
+    },
+
+    chat_bubble_reading_mode: {
+        maxWidth: 500,
+        backgroundColor: 'white',
         marginTop: 10,
         // minHeight: 70,
         padding: '17px 15px 17px 15px', // 18px
@@ -131,7 +142,7 @@ const style = {
         height: 64,
         flexGrow: 1,
         borderRadius: 5,
-        border: '1px solid #d7d7d7',
+        border: '1px solid rgb(202, 202, 202)',
         backgroundColor: 'white',
         marginRight: 12,
         display: 'flex',
@@ -162,7 +173,7 @@ const style = {
         alignItems: 'center',
         justifyContent: 'center',
         fontSize: 26,
-        color: '#736b24',
+        color: 'rgb(115, 107, 36)',
         borderTopRightRadius: 5,
         borderBottomRightRadius: 5,
         borderLeft: '1px solid #d7d7d7',
@@ -240,6 +251,7 @@ class App extends React.Component {
                     <div style={ style.top_bar_left }>
                         <div style={ style.top_bar_left_icon }>
                             <svg
+                                // back button
                                 width="40"
                                 height="40"
                                 viewBox="0 0 40 40"
@@ -247,8 +259,9 @@ class App extends React.Component {
                                 <path
                                     fill="none"
                                     strokeWidth="4"
-                                    stroke="#000000"
-                                    d="M 20 0 L 0 20 L 20 40"
+                                    stroke="rgb(32, 38, 43)"
+                                    strokeLinecap="round"
+                                    d="M 23 2 L 2 20 L 23 38"
                                 />
                             </svg>
                         </div>
@@ -261,30 +274,33 @@ class App extends React.Component {
                     <div style={ style.top_bar_right }>
                         <div style={ style.top_bar_right_icon }>
                             <svg
+                                // search button
                                 width="40"
                                 height="40"
                                 viewBox="0 0 40 40"
                             >
                                 <ellipse
-                                    cx="15"
-                                    cy="15"
-                                    rx="15"
-                                    ry="15"
+                                    cx="16"
+                                    cy="16"
+                                    rx="14"
+                                    ry="14"
                                     fill="none"
                                     strokeWidth="4"
-                                    stroke="#000000"
+                                    stroke="rgb(32, 38, 43)"
                                 />
                                 <path
                                     fill="none"
                                     strokeWidth="4"
-                                    stroke="#000000"
-                                    d="M 25 25 L 40 40"
+                                    stroke="rgb(32, 38, 43)"
+                                    strokeLinecap="round"
+                                    d="M 26 26 L 38 38"
                                 />
                             </svg>
                         </div>
 
                         <div style={ style.top_bar_right_icon }>
                             <svg
+                                // hamburger button
                                 width="40"
                                 height="40"
                                 viewBox="0 0 40 40"
@@ -292,8 +308,9 @@ class App extends React.Component {
                                 <path
                                     fill="none"
                                     strokeWidth="4"
-                                    stroke="#000000"
-                                    d="M 0 0 L 40 0 M 0 20 L 40 20 M 0 40 L 40 40"
+                                    stroke="rgb(32, 38, 43)"
+                                    strokeLinecap="round"
+                                    d="M 2 6 L 38 6 M 2 20 L 38 20 M 2 34 L 38 34"
                                 />
                             </svg>
                         </div>
@@ -327,16 +344,17 @@ class App extends React.Component {
                 <div style={ style.text_bar }>
                     <div style={ style.text_bar_left_icon }>
                         <svg
+                            // plus button
                             width="40"
                             height="40"
                             viewBox="0 0 40 40"
                         >
                             <path
                                 fill="none"
-                                strokeWidth="4"
-                                stroke="#a0a0a0"
+                                strokeWidth="5"
+                                stroke="rgb(160, 160, 160)"
                                 strokeLinecap="round"
-                                d="M 5 20 L 35 20 M 20 5 L 20 35"
+                                d="M 2 20 L 38 20 M 20 2 L 20 38"
                             />
                         </svg>
                     </div>
@@ -350,15 +368,49 @@ class App extends React.Component {
 
                         <div style={ style.text_bar_right_icon }>
                             <svg
+                                // smile button
                                 width="40"
                                 height="40"
                                 viewBox="0 0 40 40"
                             >
                                 <ellipse
-                                    cx="20" cy="20" rx="20" ry="20"
+                                    // face
+                                    cx="20" cy="20" rx="19" ry="19"
                                     fill="none"
-                                    strokeWidth="4"
-                                    stroke="#a0a0a0"
+                                    strokeWidth="3"
+                                    stroke="rgb(160, 160, 160)"
+                                />
+
+                                <ellipse
+                                    // left eye
+                                    cx="13" cy="15" rx="2" ry="3"
+                                    fill="rgb(160, 160, 160)"
+                                    strokeWidth="0"
+                                />
+
+                                <ellipse
+                                    // right eye
+                                    cx="27" cy="15" rx="2" ry="3"
+                                    fill="rgb(160, 160, 160)"
+                                    strokeWidth="0"
+                                />
+
+                                <path
+                                    // nose
+                                    fill="none"
+                                    strokeWidth="3"
+                                    stroke="rgb(160, 160, 160)"
+                                    strokeLinecap="round"
+                                    d="M 20 18 q -3 2 0 4"
+                                />
+
+                                <path
+                                    // nose
+                                    fill="none"
+                                    strokeWidth="3"
+                                    stroke="rgb(160, 160, 160)"
+                                    strokeLinecap="round"
+                                    d="M 13 25 q 7 8 14 0"
                                 />
                             </svg>
                         </div>
@@ -389,8 +441,12 @@ const socket = io.connect('http://143.248.250.17:8811/client');
 socket.on('connect', () => {
     console.log('[front] connected to socket server');
 
+    const unread_count = 0;
+
     ReactDOM.render(
-        <App message_list={[]}/>,
+        document.location.pathname == '/home'
+            ? <Home unread_count={ unread_count }/>
+            : <App message_list={[]}/>,
         document.getElementById('root_div')
     );
 });
@@ -398,8 +454,14 @@ socket.on('connect', () => {
 socket.on('message_list_updated', res => {
     console.log('[front] new message_list received!');
 
+    const unread_count = res.message_list.reduce((count, message) =>
+        count + (message.is_read ? 0 : 1)
+    , 0)
+
     ReactDOM.render(
-        <App message_list={ res.message_list }/>,
+        document.location.pathname == '/home'
+            ? <Home unread_count={ unread_count }/>
+            : <App message_list={ res.message_list }/>,
         document.getElementById('root_div')
     );
 });
