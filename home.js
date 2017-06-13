@@ -18,7 +18,7 @@ const style = {
 
     badge: {
         position: 'absolute',
-        minWidth: 48,
+        minWidth: 24,
         height: 48,
         right: 34,
         bottom: 136,
@@ -39,7 +39,7 @@ export default class Home extends React.Component {
     render() {
         return (
             <div style={ style.container }>
-                <div style={ style.app } onClick={() => { document.location.replace('/') }}/>
+                <div style={ style.app } onClick={() => { document.location.replace('/read') }}/>
                 <div style={ style.badge }>
                     { this.props.unread_count }
                 </div>

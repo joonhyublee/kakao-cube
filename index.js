@@ -9,6 +9,11 @@ const server = http.createServer((req, res) => {
         res.end(app);
     }
 
+    else if (req.url == '/init') {
+        const init_number = JSON.parse(fs.readFileSync('./init.json')).init_number;
+        res.end(init_number + '');
+    }
+
     else if (req.url == '/unread_count') {
         const message_list = JSON.parse(fs.readFileSync('./data.json')).message_list;
         const unread_count = message_list.reduce((count, message) =>
@@ -70,7 +75,7 @@ io.of('/client').on('connection', socket => {
     // upon read_all_messages event
     socket.on('read_all_messages', () => {
 
-        // load datea file
+        // load data file
         const old_message_list = JSON.parse(fs.readFileSync('./data.json')).message_list;
 
         // mark all messages as read
@@ -83,6 +88,11 @@ io.of('/client').on('connection', socket => {
 
         // write to file
         fs.writeFileSync('./data.json', JSON.stringify({ message_list: new_message_list }));
+    });
+
+    socket.on('write_init_number', init_number => {
+        // write to file
+        fs.writeFileSync('./init.json', JSON.stringify({ init_number }));
     });
 });
 

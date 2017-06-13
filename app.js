@@ -2,13 +2,14 @@ import React    from 'react';
 import ReactDOM from 'react-dom';
 import io       from 'socket.io-client';
 import Home     from './home.js';
+import SetInit  from './set_init.js';
 
 const style = {
     container: {
         backgroundColor: '#a0c0d7',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end',
+        // alignItems: 'flex-start', // flex-start
         fontFamily: 'sans-serif',
         paddingBottom: 120
     },
@@ -74,14 +75,15 @@ const style = {
     },
 
     chat_container: {
-        display: 'flex'
+        display: 'flex',
+        // flexDirection: 'row-reverse' // row-reverse
     },
 
     chat_info_column: {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        textAlign: 'right',
+        // textAlign: 'left', // left
         margin: '0px 10px',
         fontSize: 20
     },
@@ -97,17 +99,7 @@ const style = {
 
     chat_bubble: {
         maxWidth: 500,
-        backgroundColor: '#ffeb00',
-        marginTop: 10,
-        // minHeight: 70,
-        padding: '17px 15px 17px 15px', // 18px
-        fontSize: 30,
-        borderRadius: 5
-    },
-
-    chat_bubble_reading_mode: {
-        maxWidth: 500,
-        backgroundColor: 'white',
+        // backgroundColor: '#ffeb00',
         marginTop: 10,
         // minHeight: 70,
         padding: '17px 15px 17px 15px', // 18px
@@ -243,8 +235,17 @@ class App extends React.Component {
     }
 
     render() {
+        const is_reading_mode = document.location.pathname == '/read';
+
         return (
-            <div style={ style.container }>
+            <div
+                style={{
+                    ...style.container,
+                    alignItems: is_reading_mode
+                        ? 'flex-start'
+                        : 'flex-end'
+                }}
+            >
                 <div style={ style.top_status_bar }/>
 
                 <div style={ style.top_bar }>
@@ -268,7 +269,7 @@ class App extends React.Component {
                     </div>
 
                     <div style={ style.top_bar_center }>
-                        안상균
+                        { is_reading_mode ? '디프' : '이준협' }
                     </div>
 
                     <div style={ style.top_bar_right }>
@@ -320,9 +321,21 @@ class App extends React.Component {
                 { this.props.message_list.map((message, i) => (
                     <div
                         key={ i }
-                        style={ style.chat_container }
+                        style={{
+                            ...style.chat_container,
+                            flexDirection: is_reading_mode
+                                ? 'row-reverse'
+                                : 'row'
+                        }}
                     >
-                        <div style={ style.chat_info_column }>
+                        <div
+                            style={{
+                                ...style.chat_info_column,
+                                textAlign: is_reading_mode
+                                    ? 'left'
+                                    : 'right'
+                            }}
+                        >
                             <div style={ style.chat_info_unread_count }>
                                 { message.is_read ? '' : '1' }
                             </div>
@@ -332,7 +345,14 @@ class App extends React.Component {
                             </div>
                         </div>
 
-                        <div style={ style.chat_bubble }>
+                        <div
+                            style={{
+                                ...style.chat_bubble,
+                                backgroundColor: is_reading_mode
+                                    ? 'white'
+                                    : '#ffeb00'
+                            }}
+                        >
                             { message.content }
                         </div>
 
@@ -437,6 +457,7 @@ class App extends React.Component {
 }
 
 const socket = io.connect('http://143.248.250.17:8811/client');
+document.socket = socket;
 
 socket.on('connect', () => {
     console.log('[front] connected to socket server');
@@ -446,7 +467,9 @@ socket.on('connect', () => {
     ReactDOM.render(
         document.location.pathname == '/home'
             ? <Home unread_count={ unread_count }/>
-            : <App message_list={[]}/>,
+            : document.location.pathname == '/set_init'
+                ? <SetInit/>
+                : <App message_list={[]}/>,
         document.getElementById('root_div')
     );
 });
@@ -461,7 +484,9 @@ socket.on('message_list_updated', res => {
     ReactDOM.render(
         document.location.pathname == '/home'
             ? <Home unread_count={ unread_count }/>
-            : <App message_list={ res.message_list }/>,
+            : document.location.pathname == '/set_init'
+                ? <SetInit/>
+                : <App message_list={ res.message_list }/>,
         document.getElementById('root_div')
     );
 });
